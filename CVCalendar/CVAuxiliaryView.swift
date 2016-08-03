@@ -39,7 +39,6 @@ public final class CVAuxiliaryView: UIView {
         strokeColor = UIColor.clearColor()
         fillColor = UIColor.colorFromCode(0xe74c3c)
 
-        layer.cornerRadius = 5
         backgroundColor = .clearColor()
     }
 
