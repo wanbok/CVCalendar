@@ -9,5 +9,5 @@
 import Foundation
 
 @objc public enum CVStatus: Int {
-    case In, Out, Disabled, Selected, Highlighted
+    case Normal, Disabled, Selected, Highlighted
 }

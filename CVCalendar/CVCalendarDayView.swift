@@ -59,7 +59,9 @@ public final class CVCalendarDayView: UIView {
 
     public override var hidden: Bool {
         didSet {
-            userInteractionEnabled = hidden ? false : true
+            userInteractionEnabled = hidden
+                ? false && userInteractionEnabled
+                : true && userInteractionEnabled
         }
     }
 
@@ -184,16 +186,16 @@ extension CVCalendarDayView {
         }
         
         let weekDay = self.date?.weekDay ?? .Monday // Monday is default
-        let status: CVStatus = {
-            if isDisabled { return .Disabled }
-            else if isOut { return .Out }
-            return .In
-        }()
-        let present: CVPresent = isCurrentDay
+        let status: CVStatus = isDisabled ? .Disabled : .Normal
+        let present: CVPresent = {
+            if isOut { return .Out }
+            else if isCurrentDay
             && !(calendarView.coordinator.selectedDayView == nil
-                && calendarView.shouldAutoSelectDayOnMonthChange)
-            ? .Present
-            : .Not
+                && calendarView.shouldAutoSelectDayOnMonthChange) {
+                return .Present
+            }
+            return .Not
+        }()
         
         dayLabel?.textColor = appearance?.delegate?.dayLabelColor?(by: weekDay, status: status, present: present) ?? color
         dayLabel?.font = appearance?.delegate?.dayLabelFont?(by: weekDay, status: status, present: present) ?? font
@@ -458,7 +460,7 @@ extension CVCalendarDayView {
         var shape: CVShape!
         
         let weekDay = self.date?.weekDay ?? .Monday // Monday is default
-        let present: CVPresent = isCurrentDay ? .Present : .Not
+        let present: CVPresent = isOut ? .Out : (isCurrentDay ? .Present : .Not)
 
         switch type {
         case .Single:
@@ -550,12 +552,8 @@ extension CVCalendarDayView {
             }
             
             let weekDay = self.date?.weekDay ?? .Monday // Monday is default
-            let status: CVStatus = {
-                if isDisabled { return .Disabled }
-                else if isOut { return .Out }
-                return .In
-            }()
-            let present: CVPresent = isCurrentDay ? .Present : .Not
+            let status: CVStatus = isDisabled ? .Disabled : .Normal
+            let present: CVPresent = isOut ? .Out : (isCurrentDay ? .Present : .Not)
             
             dayLabel?.textColor = appearance.delegate?.dayLabelColor?(by: weekDay, status: status, present: present) ?? color
             dayLabel?.font = appearance.delegate?.dayLabelFont?(by: weekDay, status: status, present: present) ?? font
